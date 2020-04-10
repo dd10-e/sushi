@@ -60,8 +60,10 @@ trait Sushi
         ]);
     }
 
-    protected static function setSqlite()
+    public function setSqlite()
     {
+        $instance = (new static);
+        
         $cacheFileName = config('sushi.cache-prefix', 'sushi').'-'.Str::kebab(str_replace('\\', '', static::class)).'.sqlite';
         $cacheDirectory = realpath(config('sushi.cache-path', storage_path('framework/cache')));
         $cachePath = $cacheDirectory.'/'.$cacheFileName;
@@ -108,10 +110,10 @@ trait Sushi
 
     public function migratePgsql()
     {
-        // @todo Retablish Sqlite
-        // Allow pgsql to refresh excel with UI buttons
-        // each buttons should be listed with model with Sushi trait defined
-        // and allow us to update data or recreate table
+        // @todo
+        // Allow pgsql to refresh excel with UI buttons and not relauch migration each time
+        // Each buttons should be listed with model with Sushi trait defined
+        // Add action to update or recreate table
 
         $rows = $this->getRows();
         $tableName = $this->getTable();
@@ -137,14 +139,6 @@ trait Sushi
             if ($this->incrementing && ! in_array($this->primaryKey, array_keys($firstRow))) {
                 $table->increments($this->primaryKey);
             }
-
-                // $table->foreignId('window_material_id');
-
-            // foreach (array_keys($firstRow) as $value) {
-            //     if (Str::contains($value, 'Id')) {
-            //         $table->foreignId(Str::snake($value));
-            //     }
-            // }
 
             foreach ($firstRow as $column => $value) {
                 switch (true) {
